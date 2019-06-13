@@ -29,14 +29,6 @@ class SayModule(Module):
             return
         announce = True if cmd.startswith("announce") else False
 
-        channel = None
-        if announce:
-            if cmd != "announce":
-                channel = int(cmd[8:])
-        else:
-            if cmd != "say":
-                channel = int(cmd[3:])
-
         allow = False
         for role in msg.author.roles:
             if role.permissions.administrator:
@@ -44,6 +36,14 @@ class SayModule(Module):
         if not allow:
             log("Forbidden: .say for {0}".format(msg.author))
             return
+
+        channel = None
+        if announce:
+            if cmd != "announce":
+                channel = int(cmd[8:])
+        else:
+            if cmd != "say":
+                channel = int(cmd[3:])
 
         argstr = " ".join(args)
         realargs = argstr.split("§§")
