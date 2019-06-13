@@ -110,8 +110,17 @@ class SayModule(Module):
         if response is None:
             return
 
+        preset = {
+            "green": 0x01dc40,
+            "purple": 0xac00ff,
+            "blue": 0x3f92ff,
+            "gold": 0xffc901
+        }
         try:
-            color = int(response.content, 16)
+            if response.content.lower() in preset:
+                color = preset[response.content.lower()]
+            else:
+                color = int(response.content, 16)
         except:
             await msg.channel.send("Invalid color code, aborting.")
             return
