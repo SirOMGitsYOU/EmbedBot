@@ -50,7 +50,7 @@ def create_bot(piggyback):
                 return
 
             log("Got '{0}' from {1.author}".format(command, message))
-            await bot.send_typing(message.channel)
+            await message.channel.trigger_typing()
             await bot.data.handle_command(message, parts[0], parts[1:])
 
     return bot

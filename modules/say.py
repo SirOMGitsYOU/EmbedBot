@@ -27,7 +27,7 @@ class SayModule(Module):
             embed = create_embed("Error - No arguments",
                                  "Syntax: .say COLOR §§ TITLE §§ CONTENT",
                                  0xAA0000)
-            await self._bot.send_message(msg.channel, embed=embed)
+            await msg.channel.send(embed=embed)
             return
 
         argstr = " ".join(args)
@@ -36,7 +36,7 @@ class SayModule(Module):
             embed = create_embed("Error - To few real arguments",
                                  "Syntax: .say COLOR §§ TITLE §§ CONTENT",
                                  0xAA0000)
-            await self._bot.send_message(msg.channel, embed=embed)
+            await msg.channel.send(embed=embed)
             return
 
         try:
@@ -47,8 +47,8 @@ class SayModule(Module):
             embed = create_embed("Error - Parsing failed",
                                  "Example: .say 0xFF0000 §§ Hey there! §§ OK?",
                                  0xAA0000)
-            await self._bot.send_message(msg.channel, embed=embed)
+            await msg.channel.send(embed=embed)
             return
 
         embed = create_embed(title, content, color)
-        await self._bot.send_message(msg.channel, embed=embed)
+        await msg.channel.send(embed=embed)

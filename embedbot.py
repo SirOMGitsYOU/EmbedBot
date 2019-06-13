@@ -13,10 +13,10 @@ class EmbedBot:
     async def on_ready(self):
         """Event handler for when the bot is ready."""
         log("Initializing bot presence...")
-        await self.bot.change_presence(game=discord.Game(name="Skynet"))
+        await self.bot.change_presence(activity=discord.Game(name="Skynet"))
 
         log("Retrieving server...")
-        for server in self.bot.servers:
+        for server in self.bot.guilds:
             self.server = server
             log("Assigned main server: {0.name}".format(self.server))
             break
