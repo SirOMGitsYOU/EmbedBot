@@ -61,6 +61,6 @@ class Config:
         if key not in self._config:
             self._config[key] = default
             with open(self._config_file, "w") as f:
-                dump(self._config_file, f, indent=4, sort_keys=True)
+                dump(self._config, f, indent=4, sort_keys=True)
 
         return self._config[key]
