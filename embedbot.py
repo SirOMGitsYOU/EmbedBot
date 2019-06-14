@@ -1,4 +1,5 @@
 from misc.adapter import log
+from misc.config import Config
 from modules.say import SayModule
 import discord
 
@@ -9,6 +10,7 @@ class EmbedBot:
         self.bot = None
         self.server = None
         self.modules = []
+        self.config = Config()
 
     async def on_ready(self):
         """Event handler for when the bot is ready."""
