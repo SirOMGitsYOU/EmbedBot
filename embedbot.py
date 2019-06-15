@@ -8,7 +8,6 @@ class EmbedBot:
 
     def __init__(self):
         self.bot = None
-        self.server = None
         self.modules = []
         self.config = Config()
 
@@ -17,16 +16,6 @@ class EmbedBot:
         log("Initializing bot presence...")
         game = self.config.get("game-presence", "Skynet")
         await self.bot.change_presence(activity=discord.Game(name=game))
-
-        log("Retrieving server...")
-        for server in self.bot.guilds:
-            self.server = server
-            log("Assigned main server: {0.name}".format(self.server))
-            break
-
-        if self.server.large:
-            log("Requesting offline users on server...")
-            await self.bot.request_offline_members(self.server)
 
         log("Loading modules...")
         self.modules = [
