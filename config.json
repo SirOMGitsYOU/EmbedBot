@@ -1,3 +1,10 @@
 {
+    "colors": {
+        "blue": 4166399,
+        "gold": 16763137,
+        "green": 121920,
+        "purple": 11272447,
+        "white": 16777215
+    },
     "game-presence": "Skynet"
 }
