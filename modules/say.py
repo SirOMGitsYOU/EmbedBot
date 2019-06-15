@@ -16,9 +16,10 @@ class SayModule(Module):
         if cmd != "say":
             return
 
-        perms = msg.channel.permissions_for(msg.author)
-        if not perms.manage_messages:
-            await self._perm_error(msg.channel, "manage_messages",
+        chk = lambda p: p.manage_messages
+        permchk = await self._check_perms(msg.author, msg.channel, chk)
+        if not permchk:
+            await self._perm_error(msg.channel, ["manage_messages"],
                                    "this channel")
             return
 
@@ -50,20 +51,16 @@ class SayModule(Module):
         if len(response.channel_mentions) == 0:
             await msg.channel.send("Aborted.")
             return
-
         channel = response.channel_mentions[0]
-        perms = channel.permissions_for(msg.author)
-        if not perms.manage_messages:
-            await self._perm_error(msg.channel, "manage_messages",
-                                   "the target channel")
-            return
-        if not perms.send_messages:
-            await self._perm_error(msg.channel, "send_messages",
-                                   "the target channel")
-            return
-        if not perms.embed_links:
-            await self._perm_error(msg.channel, "embed_links",
-                                   "the target channel")
+
+        chk = lambda p: p.manage_messages and p.send_messages and p.embed_links
+        permchk = await self._check_perms(msg.author, channel, chk)
+        if not permchk:
+            await self._perm_error(msg.channel, [
+                "manage_messages",
+                "send_messages",
+                "embed_links"
+            ], "the target channel")
             return
 
         data["channel"] = channel
@@ -76,8 +73,10 @@ class SayModule(Module):
             data: The session data for this command.
         """
         msg = data["msg"]
-        perms = data["channel"].permissions_for(msg.author)
-        if not perms.mention_everyone:
+
+        chk = lambda p: p.mention_everyone
+        permchk = await self._check_perms(msg.author, data["channel"], chk)
+        if not permchk:
             await self._prompt_color(data)
             return
 
@@ -248,17 +247,52 @@ class SayModule(Module):
             await channel.send("Request timed out.")
             return None
 
+    async def _check_perms(self, member, channel, chk):
+        """Checks the permissions for the given user.
+
+        Args:
+            member: The member.
+            channel: The channel.
+            chk: A function taking a permissions object that checks permissions.
+
+        Returns:
+            True if and only if the permission check succeeded.
+        """
+        whitelist_roles = self._frontend.config.get("whitelist-roles", [
+            "Admin"
+        ])
+        use_real_perms = self._frontend.config.get("use-real-perms", True)
+
+        # First check: Whitelisted roles
+        for role in member.roles:
+            if role.name in whitelist_roles:
+                return True
+
+        # Second check: Use real perms, if wanted.
+        if use_real_perms:
+            perms = channel.permissions_for(member)
+            return chk(perms)
+        else:
+            return False
+
     async def _perm_error(self, channel, what, where):
         """Sends a permission error to the given channel.
 
         Args:
             channel: The channel.
-            what: The permission that is needed.
+            what: The permissions that are needed.
             where: Where the permission is needed.
         """
+        use_real_perms = self._frontend.config.get("use-real-perms", True)
+        if not use_real_perms:
+            await self._error(channel, "Insufficient Permissions", "You need to"
+                              + " be whitelisted in order to do this.")
+            return
+
+        whats = ", ".join(map(lambda s: "`%s`" % s, what))
         await self._error(channel, "Insufficient Permissions",
-                          "You need `" + what + "` in " + where
-                          + " to do this.")
+                          "You need " + whats + " in " + where
+                          + " in order to do this.")
 
     async def _error(self, channel, title, content):
         """Sends an error to the given channel.
