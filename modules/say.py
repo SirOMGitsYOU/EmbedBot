@@ -80,19 +80,29 @@ class SayModule(Module):
             await self._prompt_color(data)
             return
 
-        await msg.channel.send("Do you want to ping everyone in the target"
+        await msg.channel.send("Do you want to ping `@everyone` in the target"
                                + " channel? [Yes/No]")
         response = await self._input(msg.author, msg.channel)
         if response is None:
             return
 
-        ping = False
-        confirm = "Will not ping everyone in the target channel."
+        ping = None
+        confirm = "Will not ping anyone in the target channel."
         if response.content.lower() == "yes":
-            ping = True
-            confirm = "Will ping everyone in the target channel."
-        await msg.channel.send(confirm)
+            ping = "@everyone"
+            confirm = "Will ping `@everyone` in the target channel."
+        else:
+            await msg.channel.send("Do you want to ping `@here` in the target"
+                                   + " channel? [Yes/No]")
+            response = await self._input(msg.author, msg.channel)
+            if response is None:
+                return
 
+            if response.content.lower() == "yes":
+                ping = "@here"
+                confirm = "Will ping `@here` in the target channel."
+
+        await msg.channel.send(confirm)
         data["ping"] = ping
         await self._prompt_color(data)
 
@@ -210,9 +220,10 @@ class SayModule(Module):
 
         embed = create_embed(data["title"], data["text"], data["color"],
                              data["fields"])
-        headline = "**THIS IS HOW YOUR EMBED WILL LOOK LIKE**"
-        if data["ping"]:
-            headline += "\n(Will also ping everyone in the target channel)"
+        headline = "**THIS IS WHAT YOUR EMBED WILL LOOK LIKE**"
+        if data["ping"] is not None:
+            headline += "\n(Will also ping `" + data["ping"] \
+                        + "` in the target channel)"
         await msg.channel.send(headline, embed=embed)
 
         await msg.channel.send("Confirm sending this embed? [Yes/Abort]")
@@ -222,8 +233,8 @@ class SayModule(Module):
 
         if response.content.lower() == "yes":
             tagline = ""
-            if data["ping"]:
-                tagline = "@everyone"
+            if data["ping"] is not None:
+                tagline = data["ping"]
             await data["channel"].send(tagline, embed=embed)
         else:
             await msg.channel.send("Action aborted.")
