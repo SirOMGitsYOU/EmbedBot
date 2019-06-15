@@ -6,5 +6,9 @@
         "purple": 11272447,
         "white": 16777215
     },
-    "game-presence": "Skynet"
+    "game-presence": "Skynet",
+    "use-real-perms": true,
+    "whitelist-roles": [
+        "Admin"
+    ]
 }
