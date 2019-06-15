@@ -3,12 +3,13 @@
         "blue": 4166399,
         "gold": 16763137,
         "green": 121920,
-        "purple": 11272447,
-        "white": 16777215
+        "purple": 11272447
     },
-    "game-presence": "Skynet",
-    "use-real-perms": true,
+    "game-presence": "Various Modpacks",
+    "use-real-perms": false,
     "whitelist-roles": [
-        "Admin"
+        "Modpack Developer",
+        "Admin",
+        "Founder"
     ]
 }
