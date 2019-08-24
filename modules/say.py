@@ -82,17 +82,6 @@ class SayModule(Module):
 
         await msg.channel.send("Who should be pinged (Ie @everyone, @here, @role, @user)")
         response = await self._input(msg.author, msg.channel)
-        if response is None:
-            return
-
-        ping = None
-        confirm = "Will not ping anyone in the target channel."
-        if response.content.lower() == "yes":
-            ping = "@everyone"
-            confirm = "Will ping `@everyone` in the target channel."
-        else:
-        await msg.channel.send("Who should be pinged (Ie @everyone, @here, @role, @user)")
-        response = await self._input(msg.author, msg.channel)
 
         if response is None:
             return
@@ -103,6 +92,10 @@ class SayModule(Module):
         else:
             ping = response.content.lower()
             confirm = "Will ping `" + ping + "` in the target channel."
+            
+
+
+
 
         await msg.channel.send(confirm)
         data["ping"] = ping
