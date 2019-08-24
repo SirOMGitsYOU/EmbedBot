@@ -80,17 +80,22 @@ class SayModule(Module):
             await self._prompt_color(data)
             return
 
-        await msg.channel.send("Who should be pinged (Ie @everyone, @here, @role, @user)")
+        await msg.channel.send("Who should be pinged (Ie `everyone`, `here`, @role, @user)")
         response = await self._input(msg.author, msg.channel)
 
         if response is None:
             return
            
-        if response.content.lower == "none":
+        if response.content.lower() == "none":
             ping = None
             confirm = "Will not ping anyone in the target channel."
+  
         else:
             ping = response.content.lower()
+            if response.content == "everyone":
+                ping = "@everyone"
+            if response.content == "here":
+                ping = "@here"
             confirm = "Will ping `" + ping + "` in the target channel."
             
 
@@ -156,12 +161,12 @@ class SayModule(Module):
         """
         msg = data["msg"]
         await msg.channel.send("Please enter a description for the embed. Type"
-                               + " NONE to not have any description.")
+                               + " None to not have any description.")
         response = await self._input(msg.author, msg.channel)
         if response is None:
             return
 
-        if response.content != "NONE":
+        if response.content.lower() != "none":
             data["text"] = response.content
         await self._prompt_ask_add_field(data)
 
