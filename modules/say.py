@@ -80,8 +80,7 @@ class SayModule(Module):
             await self._prompt_color(data)
             return
 
-        await msg.channel.send("Do you want to ping `@everyone` in the target"
-                               + " channel? [Yes/No]")
+        await msg.channel.send("Who should be pinged (Ie @everyone, @here, @role, @user)")
         response = await self._input(msg.author, msg.channel)
         if response is None:
             return
@@ -92,15 +91,18 @@ class SayModule(Module):
             ping = "@everyone"
             confirm = "Will ping `@everyone` in the target channel."
         else:
-            await msg.channel.send("Do you want to ping `@here` in the target"
-                                   + " channel? [Yes/No]")
-            response = await self._input(msg.author, msg.channel)
-            if response is None:
-                return
+        await msg.channel.send("Who should be pinged (Ie @everyone, @here, @role, @user)")
+        response = await self._input(msg.author, msg.channel)
 
-            if response.content.lower() == "yes":
-                ping = "@here"
-                confirm = "Will ping `@here` in the target channel."
+        if response is None:
+            return
+           
+        if response.content.lower == "none":
+            ping = None
+            confirm = "Will not ping anyone in the target channel."
+        else:
+            ping = response.content.lower()
+            confirm = "Will ping `" + ping + "` in the target channel."
 
         await msg.channel.send(confirm)
         data["ping"] = ping
@@ -123,7 +125,8 @@ class SayModule(Module):
             "green": 0x01dc40,
             "purple": 0xac00ff,
             "blue": 0x3f92ff,
-            "gold": 0xffc901
+            "gold": 0xffc901,
+            "red": 0xFF0000
         })
         try:
             if response.content.lower() in presets:
