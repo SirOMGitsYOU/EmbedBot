@@ -125,7 +125,8 @@ class SayModule(Module):
             "purple": 0xac00ff,
             "blue": 0x3f92ff,
             "gold": 0xffc901,
-            "red": 0xFF0000
+            "red": 0xFF0000,
+            "white": 0x696969,
         })
         try:
             if response.content.lower() in presets:
