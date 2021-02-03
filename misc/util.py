@@ -35,7 +35,7 @@ def log(msg):
     print(msg)
 
 
-def create_embed(title, text, color, data=None):
+def create_embed(title, text, color, image, data=None):
     """Creates an embed.
 
     Args:
@@ -48,7 +48,8 @@ def create_embed(title, text, color, data=None):
     """
     if data is None:
         data = {}
-    embed = discord.Embed(title=title, description=text, color=color)
+    embed = discord.Embed(title=title, description=text, image=image, color=color)
     for key in data:
         embed.add_field(name=key, value=data[key])
+    embed.set_image(url=str(image))
     return embed

@@ -30,6 +30,7 @@ class SayModule(Module):
             "color": 1,
             "title": "",
             "text": "",
+            "image": "",
             "fields": {}
         }
         await self._prompt_channel(data)
@@ -92,9 +93,9 @@ class SayModule(Module):
   
         else:
             ping = response.content.lower()
-            if response.content == "everyone":
+            if response.content.lower() == "everyone":
                 ping = "@everyone"
-            if response.content == "here":
+            if response.content.lower() == "here":
                 ping = "@here"
             confirm = "Will ping `" + ping + "` in the target channel."
             
@@ -168,6 +169,23 @@ class SayModule(Module):
 
         if response.content.lower() != "none":
             data["text"] = response.content
+        await self._prompt_image(data)
+
+    async def _prompt_image(self, data):
+        """Part of the .say command. Prompts the embed image.
+
+        Args:
+            data: The session data for this command.
+        """
+        msg = data["msg"]
+        await msg.channel.send("Please enter the URL of the image/GIF you'd like to use."
+                               + " Type none to no Image/GIF attached.")
+        response = await self._input(msg.author, msg.channel)
+        if response is None:
+            return
+
+        if response.content.lower() != "none":
+            data["image"] = response.content
         await self._prompt_ask_add_field(data)
 
     async def _prompt_ask_add_field(self, data):
@@ -219,7 +237,7 @@ class SayModule(Module):
         """
         msg = data["msg"]
 
-        embed = create_embed(data["title"], data["text"], data["color"],
+        embed = create_embed(data["title"], data["text"], data["color"], data["image"]
                              data["fields"])
         headline = "**THIS IS WHAT YOUR EMBED WILL LOOK LIKE**"
         if data["ping"] is not None:
@@ -314,5 +332,5 @@ class SayModule(Module):
             title: The title of the error.
             content: The error message.
         """
-        embed = create_embed("Error - " + title, content, 0xAA0000)
+        embed = create_embed("Error - " + title, content, "", 0xAA0000)
         await channel.send(embed=embed)
