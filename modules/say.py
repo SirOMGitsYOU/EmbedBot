@@ -237,8 +237,7 @@ class SayModule(Module):
         """
         msg = data["msg"]
 
-        embed = create_embed(data["title"], data["text"], data["color"], data["image"]
-                             data["fields"])
+        embed = create_embed(data["title"], data["text"], data["color"], data["image"], data["fields"])
         headline = "**THIS IS WHAT YOUR EMBED WILL LOOK LIKE**"
         if data["ping"] is not None:
             headline += "\n(Will also ping `" + data["ping"] \
